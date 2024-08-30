@@ -1,0 +1,3 @@
+[submodule "Protos"]
+	path = Protos
+	url = git@github.com:nic-cinqmars/dark-protos.git
