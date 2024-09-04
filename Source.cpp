@@ -12,6 +12,5 @@ int main()
     {
         proxy.update();
     }
-    
     return 0;
 }
