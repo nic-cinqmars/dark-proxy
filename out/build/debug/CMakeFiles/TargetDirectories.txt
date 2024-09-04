@@ -1,6 +1,0 @@
-/home/burger/Desktop/dark-proxy/out/build/debug/CMakeFiles/dark-proxy.dir
-/home/burger/Desktop/dark-proxy/out/build/debug/CMakeFiles/edit_cache.dir
-/home/burger/Desktop/dark-proxy/out/build/debug/CMakeFiles/rebuild_cache.dir
-/home/burger/Desktop/dark-proxy/out/build/debug/Protos/CMakeFiles/protos.dir
-/home/burger/Desktop/dark-proxy/out/build/debug/Protos/CMakeFiles/edit_cache.dir
-/home/burger/Desktop/dark-proxy/out/build/debug/Protos/CMakeFiles/rebuild_cache.dir
