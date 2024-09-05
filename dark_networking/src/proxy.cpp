@@ -82,7 +82,7 @@ void Proxy::start()
         std::cerr << e.what() << '\n';
     }
     
-    std::cout << "Server started on port [" << port << "].\n";
+    std::cout << "Proxy server started on port [" << port << "].\n";
 }
 
 void Proxy::update()
