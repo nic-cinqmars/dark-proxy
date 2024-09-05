@@ -1,6 +1,6 @@
 #define ASIO_STANDALONE
-#include "Networking/Http/HttpDiscoveryServer.h"
-#include "Networking/Proxy/Proxy.h"
+#include <dark_networking/http_discovery_server.h>
+#include <dark_networking/proxy.h>
 
 int main()
 {

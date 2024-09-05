@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.8)
-project(dark-networking CXX)
+project(dark_proxy CXX)
 
-add_subdirectory(Protos)
+add_subdirectory(protos)
+add_subdirectory(dark_networking)
 
-add_executable(dark-proxy Source.cpp)
-target_link_libraries(dark-proxy PUBLIC "$<LINK_LIBRARY:WHOLE_ARCHIVE,protos>")
+add_executable(dark_proxy source.cpp)
 
-#target_compile_options(dark-proxy PRIVATE -Wall -Wextra -Wpedantic)
+target_link_libraries(dark_proxy PRIVATE dark_networking)
+
+#target_compile_options(dark_proxy PRIVATE -Wall -Wextra -Wpedantic)
