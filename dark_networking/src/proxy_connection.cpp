@@ -5,6 +5,7 @@
 #include <Account.pb.h>
 #include <_Chat.pb.h>
 #include <_Character.pb.h>
+#include <Merchant.pb.h>
 
 using namespace DC::Packet;
 
