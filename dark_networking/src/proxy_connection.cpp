@@ -26,7 +26,7 @@ ProxyConnection::ProxyConnection(std::shared_ptr<asio::io_context> context,
 void ProxyConnection::onClientPacket(const Packet& packet)
 {
     PacketCommand packetType = PacketCommand(packet.header.id);
-    std::cout << "Received [" << PacketCommand_Name(packetType) << "] packet from client : \n";
+    std::cout << "Received (" << packet.header.id << ")[" << PacketCommand_Name(packetType) << "] packet from client : \n";
 
     const google::protobuf::Descriptor* desc = google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName("DC.Packet.S" + PacketCommand_Name(packetType));
     if (desc != nullptr)
@@ -46,7 +46,7 @@ void ProxyConnection::onClientPacket(const Packet& packet)
 void ProxyConnection::onServerPacket(const Packet& packet)
 {
     PacketCommand packetType = PacketCommand(packet.header.id);
-    std::cout << "Received [" << PacketCommand_Name(packetType) << "] packet from server :\n";
+    std::cout << "Received (" << packet.header.id << ")[" << PacketCommand_Name(packetType) << "] packet from server :\n";
 
     const google::protobuf::Descriptor* desc = google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName("DC.Packet.S" + PacketCommand_Name(packetType));
     if (desc != nullptr)
