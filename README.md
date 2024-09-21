@@ -9,28 +9,28 @@ A C++ man in the middle proxy made for the game Dark and Darker.
 Clone the project and submodules
 
 ```bash
-  git clone https://github.com/nic-cinqmars/dark-protos.git --recurse-submodules
+git clone https://github.com/nic-cinqmars/dark-proxy.git --recurse-submodules
 ```
 
 Go to the project directory
 
 ```bash
-  cd dark-proxy
+cd dark-proxy
 ```
 
-Compile using CMake and Make
+Compile using CMake and Make - (example)
 
 ```bash
-  mkdir build
-  cd build
-  cmake ..
-  make -j 8
+mkdir build
+cd build
+cmake ..
+make -j 8
 ```
 
 Start the proxy
 
 ```bash
-  ./dark-proxy
+./dark-proxy
 ```
 
 
@@ -38,7 +38,7 @@ Start the proxy
 On whatever platform you are playing, add the following launch option
 
 ```bash
-  server=127.0.0.1:30000
+server=127.0.0.1:30000
 ```
 
 Launch the game as normal and you should now be connected to Dark and Darker through this proxy!
