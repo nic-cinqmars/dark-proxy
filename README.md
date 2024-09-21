@@ -9,7 +9,7 @@ A C++ man in the middle proxy made for the game Dark and Darker.
 Clone the project and submodules
 
 ```bash
-  git clone git@github.com:nic-cinqmars/dark-proxy.git --recurse-submodules
+  git clone https://github.com/nic-cinqmars/dark-protos.git --recurse-submodules
 ```
 
 Go to the project directory
