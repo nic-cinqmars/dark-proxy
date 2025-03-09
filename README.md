@@ -38,7 +38,7 @@ Start the proxy
 On whatever platform you are playing, add the following launch option
 
 ```bash
-server=127.0.0.1:30000
+-server=127.0.0.1:30000
 ```
 
 Launch the game as normal and you should now be connected to Dark and Darker through this proxy!
