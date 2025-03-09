@@ -6,10 +6,9 @@
 
 struct PacketHeader
 {
-    uint16_t length = 0;
-    const uint16_t paddingBytes = 0;
+    uint32_t length = 0;
     uint16_t id;
-    const uint16_t paddingBytes2 = 0;
+    const uint16_t paddingBytes = 0;
 };
 
 struct Packet

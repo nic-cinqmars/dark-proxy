@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <thread>
+#include <fstream>
 #include <asio.hpp>
 #include "thread_safe_queue.h"
 #include "packet.h"

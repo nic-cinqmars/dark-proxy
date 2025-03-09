@@ -6,6 +6,7 @@
 #include <_Chat.pb.h>
 #include <_Character.pb.h>
 #include <Merchant.pb.h>
+#include <InGame.pb.h>
 
 using namespace DC::Packet;
 
@@ -26,7 +27,7 @@ ProxyConnection::ProxyConnection(std::shared_ptr<asio::io_context> context,
 void ProxyConnection::onClientPacket(const Packet& packet)
 {
     PacketCommand packetType = PacketCommand(packet.header.id);
-    std::cout << "Received (" << packet.header.id << ")[" << PacketCommand_Name(packetType) << "] packet from client : \n";
+    std::cout << "Received (" << packet.header.id << ")[" << PacketCommand_Name(packetType) << "] { " << packet.header.length << " bytes } packet from client :\n";
 
     const google::protobuf::Descriptor* desc = google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName("DC.Packet.S" + PacketCommand_Name(packetType));
     if (desc != nullptr)
@@ -46,17 +47,20 @@ void ProxyConnection::onClientPacket(const Packet& packet)
 void ProxyConnection::onServerPacket(const Packet& packet)
 {
     PacketCommand packetType = PacketCommand(packet.header.id);
-    std::cout << "Received (" << packet.header.id << ")[" << PacketCommand_Name(packetType) << "] packet from server :\n";
+    std::cout << "Received (" << packet.header.id << ")[" << PacketCommand_Name(packetType) << "] { " << packet.header.length << " bytes } packet from server :\n";
 
-    const google::protobuf::Descriptor* desc = google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName("DC.Packet.S" + PacketCommand_Name(packetType));
-    if (desc != nullptr)
+    if (packetType != S2C_FRIEND_SET_FRIEND_INFOS_NOT)
     {
-        google::protobuf::Message* message = google::protobuf::MessageFactory::generated_factory()->GetPrototype(desc)->New();
-        message->ParseFromArray(packet.message.data(), packet.message.size());
-
-        std::cout << message->DebugString();
-
-        delete message;
+        const google::protobuf::Descriptor* desc = google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName("DC.Packet.S" + PacketCommand_Name(packetType));
+        if (desc != nullptr)
+        {
+            google::protobuf::Message* message = google::protobuf::MessageFactory::generated_factory()->GetPrototype(desc)->New();
+            message->ParseFromArray(packet.message.data(), packet.message.size());
+    
+            std::cout << message->DebugString();
+    
+            delete message;
+        }
     }
 
     switch (packetType)
