@@ -49,18 +49,15 @@ void ProxyConnection::onServerPacket(const Packet& packet)
     PacketCommand packetType = PacketCommand(packet.header.id);
     std::cout << "Received (" << packet.header.id << ")[" << PacketCommand_Name(packetType) << "] { " << packet.header.length << " bytes } packet from server :\n";
 
-    if (packetType != S2C_FRIEND_SET_FRIEND_INFOS_NOT)
+    const google::protobuf::Descriptor* desc = google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName("DC.Packet.S" + PacketCommand_Name(packetType));
+    if (desc != nullptr)
     {
-        const google::protobuf::Descriptor* desc = google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName("DC.Packet.S" + PacketCommand_Name(packetType));
-        if (desc != nullptr)
-        {
-            google::protobuf::Message* message = google::protobuf::MessageFactory::generated_factory()->GetPrototype(desc)->New();
-            message->ParseFromArray(packet.message.data(), packet.message.size());
-    
-            std::cout << message->DebugString();
-    
-            delete message;
-        }
+        google::protobuf::Message* message = google::protobuf::MessageFactory::generated_factory()->GetPrototype(desc)->New();
+        message->ParseFromArray(packet.message.data(), packet.message.size());
+
+        std::cout << message->DebugString();
+
+        delete message;
     }
 
     switch (packetType)
