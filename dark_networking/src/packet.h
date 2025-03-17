@@ -6,7 +6,7 @@
 
 struct PacketHeader
 {
-    uint32_t length = 0;
+    uint32_t length = sizeof(PacketHeader);
     uint16_t id;
     const uint16_t paddingBytes = 0;
 };
@@ -20,7 +20,7 @@ struct Packet
     {
         std::copy(message.begin(), message.end(), std::back_inserter(packet.message));
 
-        packet.header.length = sizeof(PacketHeader) + packet.message.size();
+        packet.header.length += packet.message.size();
 
         return packet;
     }

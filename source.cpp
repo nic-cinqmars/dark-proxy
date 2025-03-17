@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 			}
 			else if (arg.find("port=") != std::string::npos)
 			{
-				proxyIp = std::stoi(arg.substr(5));
+				proxyPort = std::stoi(arg.substr(5));
 			}
 		}
 	}
