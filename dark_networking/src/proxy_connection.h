@@ -19,6 +19,10 @@ private:
     std::shared_ptr<asio::io_context> context;
     std::thread contextThread;
 
+    bool sentWelcomeMessage = false;
+    bool automaticallySelectRegion = true;
+    uint32_t selectedRegion = 0;
+
     ProxyConnection(std::shared_ptr<asio::io_context> context,
         std::unique_ptr<asio::ip::tcp::socket> clientSocket,
         std::unique_ptr<asio::ip::tcp::socket> serverSocket);
@@ -76,4 +80,6 @@ public:
     {
         clientConnection->sendPacket(packet);
     }
+
+    void sendTextMessageToClient(const std::string& message);
 };
