@@ -17,7 +17,7 @@ ProxyConnection::ProxyConnection(std::shared_ptr<asio::io_context> context,
     std::unique_ptr<asio::ip::tcp::socket> clientSocket, std::unique_ptr<asio::ip::tcp::socket> serverSocket) : 
     context(std::move(context))
 {
-    //std::cout << "New proxy connection\n";
+    std::cout << "New proxy connection\n";
     clientConnection = TcpConnection::create(this->context, std::move(clientSocket), incomingClientPackets);
     serverConnection = TcpConnection::create(this->context, std::move(serverSocket), incomingServerPackets);
 
@@ -86,7 +86,7 @@ void ProxyConnection::onClientPacket(const Packet& packet)
                 {
                     sendTextMessageToClient("- Available commands -");
 
-                    std::string commands[4];
+                    std::string commands[3];
                     commands[0] = "/help - displays available commands";
                     commands[1] = "/server - displays the currently selected server for matchmaking";
                     commands[2] = "/server [region] - selects the region as server for matchmaking. Possible values : usw, use, eu, kr, sg, au, br, jp";
