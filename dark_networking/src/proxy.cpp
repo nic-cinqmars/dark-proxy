@@ -14,11 +14,7 @@ void Proxy::waitForClientConnections()
         {
             if (!ec)
             {
-                std::cout << "New client connection : " << tempClientSocket->remote_endpoint() << "\n";
-
                 HttpDiscoveryClient::DarkServerInfo serverInfo = httpClient->getServerRequest();
-
-                std::cout << "Connecting client to : " << serverInfo.ip << ":" << serverInfo.port << "\n";
 
                 asio::ip::tcp::resolver resolver(context);
                 auto endpoints = resolver.resolve(serverInfo.ip, serverInfo.port);
@@ -29,8 +25,6 @@ void Proxy::waitForClientConnections()
                     {
                         if (!ec)
                         {
-                            std::cout << "New server connection : " << tempServerSocket->remote_endpoint() << "\n";
-
                             std::lock_guard lock(proxyConnectionsMutex);
                             proxyConnections.emplace_back(ProxyConnection::create(tempContext, std::move(tempClientSocket), std::move(tempServerSocket)));
                         }

@@ -7,6 +7,9 @@
 #include <_Character.pb.h>
 #include <Merchant.pb.h>
 #include <InGame.pb.h>
+#include <Trade.pb.h>
+#include <Party.pb.h>
+#include <Lobby.pb.h>
 
 using namespace DC::Packet;
 
@@ -14,7 +17,7 @@ ProxyConnection::ProxyConnection(std::shared_ptr<asio::io_context> context,
     std::unique_ptr<asio::ip::tcp::socket> clientSocket, std::unique_ptr<asio::ip::tcp::socket> serverSocket) : 
     context(std::move(context))
 {
-    std::cout << "New proxy connection\n";
+    //std::cout << "New proxy connection\n";
     clientConnection = TcpConnection::create(this->context, std::move(clientSocket), incomingClientPackets);
     serverConnection = TcpConnection::create(this->context, std::move(serverSocket), incomingServerPackets);
 
@@ -27,6 +30,7 @@ ProxyConnection::ProxyConnection(std::shared_ptr<asio::io_context> context,
 void ProxyConnection::onClientPacket(const Packet& packet)
 {
     PacketCommand packetType = PacketCommand(packet.header.id);
+
     std::cout << "Received (" << packet.header.id << ")[" << PacketCommand_Name(packetType) << "] { " << packet.header.length << " bytes } packet from client :\n";
 
     const google::protobuf::Descriptor* desc = google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName("DC.Packet.S" + PacketCommand_Name(packetType));
@@ -82,7 +86,7 @@ void ProxyConnection::onClientPacket(const Packet& packet)
                 {
                     sendTextMessageToClient("- Available commands -");
 
-                    std::string commands[3];
+                    std::string commands[4];
                     commands[0] = "/help - displays available commands";
                     commands[1] = "/server - displays the currently selected server for matchmaking";
                     commands[2] = "/server [region] - selects the region as server for matchmaking. Possible values : usw, use, eu, kr, sg, au, br, jp";
@@ -184,6 +188,8 @@ void ProxyConnection::onClientPacket(const Packet& packet)
                 // Do not send packet to server
                 return;
             }
+
+            break;
         }
     }
 
@@ -193,6 +199,7 @@ void ProxyConnection::onClientPacket(const Packet& packet)
 void ProxyConnection::onServerPacket(const Packet& packet)
 {
     PacketCommand packetType = PacketCommand(packet.header.id);
+
     std::cout << "Received (" << packet.header.id << ")[" << PacketCommand_Name(packetType) << "] { " << packet.header.length << " bytes } packet from server :\n";
 
     const google::protobuf::Descriptor* desc = google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName("DC.Packet.S" + PacketCommand_Name(packetType));

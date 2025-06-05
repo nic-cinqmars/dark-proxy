@@ -26,12 +26,9 @@ const HttpDiscoveryClient::DarkServerInfo HttpDiscoveryClient::getServerRequest(
     asio::connect(socket, endpoints);
 
     message = getServerRequestMessage();
-    std::cout << "Sending message : " << message << "\n";
 
     asio::write(socket, asio::buffer(message));
     asio::read_until(socket, asio::dynamic_buffer(receivedMessage), "}"); 
-
-    std::cout << "Recieved message : " << receivedMessage << "\n";
 
     std::string ipKey = "\"ipAddress\": \"";
     std::string ip = receivedMessage.substr(receivedMessage.find(ipKey) + ipKey.length());
