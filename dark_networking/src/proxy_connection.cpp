@@ -27,10 +27,47 @@ ProxyConnection::ProxyConnection(std::shared_ptr<asio::io_context> context,
     serverConnection->startReading();
 }
 
+std::string ProxyConnection::getRegionName(const int& region) const
+{
+    std::string server;
+
+    switch (region)
+    {
+        case 1:
+            server = "US West";
+            break;
+        case 2:
+            server = "US East";
+            break;
+        case 3:
+            server = "EU Central";
+            break;
+        case 4:
+            server = "Korea";
+            break;
+        case 5:
+            server = "Singapore";
+            break;
+        case 6:
+            server = "Sydney";
+            break;
+        case 7:
+            server = "Sao Paulo";
+            break;
+        case 8:
+            server = "Tokyo";
+            break;
+        default:
+            server = "None";
+    }
+
+    return server;
+}
+
 void ProxyConnection::onClientPacket(const Packet& packet)
 {
     PacketCommand packetType = PacketCommand(packet.header.id);
-
+ 
     std::cout << "Received (" << packet.header.id << ")[" << PacketCommand_Name(packetType) << "] { " << packet.header.length << " bytes } packet from client :\n";
 
     const google::protobuf::Descriptor* desc = google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName("DC.Packet.S" + PacketCommand_Name(packetType));
@@ -47,27 +84,6 @@ void ProxyConnection::onClientPacket(const Packet& packet)
 
     switch (packetType)
     {
-        case C2S_AUTO_MATCH_REG_REQ:
-        {
-            if (automaticallySelectRegion)
-                break;
-
-            SC2S_AUTO_MATCH_REG_REQ autoMatchRequest;
-            autoMatchRequest.ParseFromArray(packet.message.data(), packet.message.size());
-
-            autoMatchRequest.set_region(selectedRegion);
-
-            Packet autoMatchRequestPacket;
-            autoMatchRequestPacket.header.id = C2S_AUTO_MATCH_REG_REQ;
-            autoMatchRequestPacket << autoMatchRequest.SerializeAsString();
-
-            std::cout << "[Proxy] Sending modified Auto_Match packet: \n" << autoMatchRequest.DebugString();
-
-            serverConnection->sendPacket(autoMatchRequestPacket);
-            
-            // Send modified packet and return
-            return;
-        }
         case C2S_WHISPER_CHAT_REQ:
         {
             SC2S_WHISPER_CHAT_REQ whisperRequest;
@@ -86,10 +102,9 @@ void ProxyConnection::onClientPacket(const Packet& packet)
                 {
                     sendTextMessageToClient("- Available commands -");
 
-                    std::string commands[3];
+                    std::string commands[2];
                     commands[0] = "/help - displays available commands";
                     commands[1] = "/server - displays the currently selected server for matchmaking";
-                    commands[2] = "/server [region] - selects the region as server for matchmaking. Possible values : usw, use, eu, kr, sg, au, br, jp";
                     
                     for (const std::string& command : commands)
                     {
@@ -98,87 +113,7 @@ void ProxyConnection::onClientPacket(const Packet& packet)
                 }
                 else if (enteredMessage == "/server")
                 {
-                    std::string server;
-                    switch (selectedRegion)
-                    {
-                        case 1:
-                            server = "US West";
-                            break;
-                        case 2:
-                            server = "US East";
-                            break;
-                        case 3:
-                            server = "EU Central";
-                            break;
-                        case 4:
-                            server = "Korea";
-                            break;
-                        case 5:
-                            server = "Singapore";
-                            break;
-                        case 6:
-                            server = "Sydney";
-                            break;
-                        case 7:
-                            server = "Sao Paulo";
-                            break;
-                        case 8:
-                            server = "Tokyo";
-                            break;
-                        default:
-                            server = "None";
-                    }
-                    sendTextMessageToClient("Current server: " + server);
-                }
-                else if (enteredMessage.rfind("/server ", 0) == 0)
-                {
-                    std::string region = enteredMessage.erase(0, enteredMessage.find(" ") + 1);
-                    automaticallySelectRegion = false;
-                    if (region == "usw")
-                    {
-                        selectedRegion = 1;
-                        sendTextMessageToClient("Set matchmaking region to US West!");
-                    }
-                    else if (region == "use")
-                    {
-                        selectedRegion = 2;
-                        sendTextMessageToClient("Set matchmaking region to US East!");
-                    }
-                    else if (region == "eu")
-                    {
-                        selectedRegion = 3;
-                        sendTextMessageToClient("Set matchmaking region to Europe!");
-                    }
-                    else if (region == "kr")
-                    {
-                        selectedRegion = 4;
-                        sendTextMessageToClient("Set matchmaking region to Korea!");
-                    }
-                    else if (region == "sg")
-                    {
-                        selectedRegion = 5;
-                        sendTextMessageToClient("Set matchmaking region to Singapore!");
-                    }
-                    else if (region == "au")
-                    {
-                        selectedRegion = 6;
-                        sendTextMessageToClient("Set matchmaking region to Australia!");
-                    }
-                    else if (region == "br")
-                    {
-                        selectedRegion = 7;
-                        sendTextMessageToClient("Set matchmaking region to Brazil!");
-                    }
-                    else if (region == "jp")
-                    {
-                        selectedRegion = 8;
-                        sendTextMessageToClient("Set matchmaking region to Japan!");
-                    }
-                    else
-                    {
-                        automaticallySelectRegion = true;
-                        sendTextMessageToClient("Unknown region! Possible values : usw, use, eu, kr, sg, au, br, jp");
-                    }
+                    sendTextMessageToClient("Current server: " + getRegionName(matchmakingRegion));
                 }
                 else
                 {
@@ -199,7 +134,7 @@ void ProxyConnection::onClientPacket(const Packet& packet)
 void ProxyConnection::onServerPacket(const Packet& packet)
 {
     PacketCommand packetType = PacketCommand(packet.header.id);
-
+  
     std::cout << "Received (" << packet.header.id << ")[" << PacketCommand_Name(packetType) << "] { " << packet.header.length << " bytes } packet from server :\n";
 
     const google::protobuf::Descriptor* desc = google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName("DC.Packet.S" + PacketCommand_Name(packetType));
@@ -230,8 +165,11 @@ void ProxyConnection::onServerPacket(const Packet& packet)
             SS2C_PING_REGION_SELECT_NOT regionSelectNotification;
             regionSelectNotification.ParseFromArray(packet.message.data(), packet.message.size());
 
-            if (regionSelectNotification.result() == 1 && automaticallySelectRegion)
-                selectedRegion = regionSelectNotification.region();
+            if (regionSelectNotification.result() == 1)
+            {
+                matchmakingRegion = regionSelectNotification.region();
+                sendTextMessageToClient("Server region changed to " + getRegionName(matchmakingRegion) + "!");
+            }
     
             break;
         }

@@ -20,8 +20,7 @@ private:
     std::thread contextThread;
 
     bool sentWelcomeMessage = false;
-    bool automaticallySelectRegion = true;
-    uint32_t selectedRegion = 0;
+    uint32_t matchmakingRegion = 0;
 
     ProxyConnection(std::shared_ptr<asio::io_context> context,
         std::unique_ptr<asio::ip::tcp::socket> clientSocket,
@@ -47,6 +46,8 @@ public:
         if (contextThread.joinable())
             contextThread.join();
     }
+
+    std::string getRegionName(const int& region) const;
 
     void update()
     {
